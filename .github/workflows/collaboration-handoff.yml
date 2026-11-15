@@ -44,10 +44,17 @@ jobs:
             });
             const files = (cmp.data.files || []).map(f => f.filename);
             const taskChanged = files.includes(".collaboration/inbox/chatgpt-to-glm.md");
-            const deliveryChanged =
-              files.includes(".collaboration/inbox/glm-to-chatgpt.md") ||
+            let deliveryChanged =
               files.includes("sglang-video/g2.1/G2.1-review-report.md") ||
               files.some(p => p.startsWith("sglang-video/g2.1/review/"));
+            if (files.includes(".collaboration/inbox/glm-to-chatgpt.md")) {
+              const inbox = await github.rest.repos.getContent({
+                owner: context.repo.owner, repo: context.repo.repo,
+                path: ".collaboration/inbox/glm-to-chatgpt.md", ref: context.sha
+              });
+              const content = Buffer.from(inbox.data.content, "base64").toString("utf8");
+              deliveryChanged = deliveryChanged || /Delivery commit SHA:\\s*[0-9a-f]{7,40}/i.test(content);
+            }
             if (!taskChanged && !deliveryChanged) return;
 
             let taskId = "unknown";
