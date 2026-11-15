@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>G2.1 动态样条 · SGLang 动画课第 1 集（技术纠错+动画升级）</title>
+<style>
+  html,body{margin:0;padding:0;background:#0a1524;}
+  #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(120% 120% at 50% 36%, #16294a 0%, #0e1c34 55%, #0a1524 100%);font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;}
+  #world{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;will-change:transform;}
+  #scene{overflow:visible;}
+  .pp{opacity:0;transform-box:fill-box;transform-origin:center;}
+  .dr{opacity:0;}
+  text{font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;}
+  #sub{position:absolute;left:0;bottom:0;width:1920px;height:96px;display:flex;align-items:center;justify-content:center;background:rgba(10,21,36,0.55);opacity:0;}
+  #subtext{color:#eef4fc;font-size:34px;letter-spacing:1px;}
+  #mark{position:absolute;left:44px;top:30px;color:#c9d8ee;font-size:22px;opacity:.85;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="world">
+  <svg id="scene" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <defs>
+      <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.6" fill="#7fa8d9" opacity="0.10"/></pattern>
+      <linearGradient id="panelG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#13233f"/><stop offset="100%" stop-color="#0f1c33"/></linearGradient>
+      <linearGradient id="goldG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffd977"/><stop offset="100%" stop-color="#e8b13f"/></linearGradient>
+      <linearGradient id="hrowG" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1a3157"/><stop offset="100%" stop-color="#254a72"/></linearGradient>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f5c24b"/></marker>
+      <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7fb3e8"/></marker>
+      <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#79c7a3"/></marker>
+      <marker id="arrT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#58c2b8"/></marker>
+    </defs>
+    <rect x="-600" y="-400" width="6200" height="1900" fill="url(#dots)"/>
+
+    <!-- ============ 主舞台：浏览器 + 流水线 ============ -->
+    <g id="brw">
+      <rect x="120" y="96" width="420" height="230" rx="18" fill="url(#panelG)" stroke="#3a5480" stroke-width="2"/>
+      <text x="150" y="140" fill="#9fb6d8" font-size="20">A 区 · 用户视角</text>
+      <g id="ebox"><rect x="150" y="160" width="300" height="42" rx="21" fill="#0c1730" stroke="#43608f" stroke-width="1.6"/></g>
+      <g id="ebtn"><rect x="460" y="168" width="52" height="27" rx="13.5" fill="url(#goldG)"/></g>
+      <clipPath id="pclip"><rect id="pclipr" x="168" y="164" width="0" height="36"/></clipPath>
+      <text x="168" y="188" fill="#dfe9f7" font-size="20" clip-path="url(#pclip)">什么是 KV Cache？</text>
+      <!-- 切分边界线（先出现） -->
+      <g id="qcuts" class="dr" stroke="#58c2b8" stroke-width="2">
+        <line x1="196" y1="212" x2="196" y2="252"/><line x1="226" y1="212" x2="226" y2="252"/>
+        <line x1="258" y1="212" x2="258" y2="252"/><line x1="304" y1="212" x2="304" y2="252"/><line x1="368" y1="212" x2="368" y2="252"/>
+      </g>
+      <!-- 5 个 Token Chip（切分后分离+ID 映射） -->
+      <g id="qc0" class="pp"><rect x="150" y="222" rx="8" width="56" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="178" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">什么</text><text x="178" y="274" text-anchor="middle" fill="#f5c24b" font-size="15">id₁</text></g>
+      <g id="qc1" class="pp"><rect x="216" y="222" rx="8" width="44" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="238" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">是</text><text x="238" y="274" text-anchor="middle" fill="#f5c24b" font-size="15">id₂</text></g>
+      <g id="qc2" class="pp"><rect x="270" y="222" rx="8" width="52" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="296" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">KV</text><text x="296" y="274" text-anchor="middle" fill="#f5c24b" font-size="15">id₃</text></g>
+      <g id="qc3" class="pp"><rect x="332" y="222" rx="8" width="72" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="368" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">Cache</text><text x="368" y="274" text-anchor="middle" fill="#f5c24b" font-size="15">id₄</text></g>
+      <g id="qc4" class="pp"><rect x="414" y="222" rx="8" width="34" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="431" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">？</text><text x="431" y="274" text-anchor="middle" fill="#f5c24b" font-size="15">id₅</text></g>
+      <g id="qnote" class="pp"><text x="150" y="296" fill="#f5c24b" font-size="16">教学切分示意 · 非真实 Qwen3 Tokenizer 输出 · 5 Token ⇄ 5 ID 一一对应</text></g>
+    </g>
+
+    <line id="rail" class="dr" x1="150" y1="470" x2="1830" y2="470" stroke="#2c4470" stroke-width="3" stroke-dasharray="3 9"/>
+
+    <g id="napi" class="pp">
+      <rect x="150" y="540" width="250" height="130" rx="20" fill="url(#panelG)" stroke="#7fb3e8" stroke-width="2.6"/>
+      <text x="275" y="594" text-anchor="middle" fill="#dfe9f7" font-size="28">API Server</text>
+      <text x="275" y="632" text-anchor="middle" fill="#7fb3e8" font-size="21">前台 · 入口</text>
+    </g>
+    <g id="ntok" class="pp">
+      <rect x="470" y="522" width="250" height="160" rx="20" fill="url(#panelG)" stroke="#7fb3e8" stroke-width="2.6"/>
+      <text x="595" y="558" text-anchor="middle" fill="#dfe9f7" font-size="25">Tokenizer</text>
+      <!-- 5 Token ⇄ 5 ID（与输入/内部完全一致） -->
+      <g id="tid0" class="pp"><rect x="482" y="572" rx="6" width="44" height="30" fill="#16294a" stroke="#4a6ba0" stroke-width="1.4"/><text x="504" y="593" text-anchor="middle" fill="#cfe0f4" font-size="13">什么</text><text x="504" y="668" text-anchor="middle" fill="#f5c24b" font-size="13">id₁</text></g>
+      <g id="tid1" class="pp"><rect x="530" y="572" rx="6" width="34" height="30" fill="#16294a" stroke="#4a6ba0" stroke-width="1.4"/><text x="547" y="593" text-anchor="middle" fill="#cfe0f4" font-size="13">是</text><text x="547" y="668" text-anchor="middle" fill="#f5c24b" font-size="13">id₂</text></g>
+      <g id="tid2" class="pp"><rect x="568" y="572" rx="6" width="40" height="30" fill="#16294a" stroke="#4a6ba0" stroke-width="1.4"/><text x="588" y="593" text-anchor="middle" fill="#cfe0f4" font-size="13">KV</text><text x="588" y="668" text-anchor="middle" fill="#f5c24b" font-size="13">id₃</text></g>
+      <g id="tid3" class="pp"><rect x="612" y="572" rx="6" width="62" height="30" fill="#16294a" stroke="#4a6ba0" stroke-width="1.4"/><text x="643" y="593" text-anchor="middle" fill="#cfe0f4" font-size="13">Cache</text><text x="643" y="668" text-anchor="middle" fill="#f5c24b" font-size="13">id₄</text></g>
+      <g id="tid4" class="pp"><rect x="678" y="572" rx="6" width="30" height="30" fill="#16294a" stroke="#4a6ba0" stroke-width="1.4"/><text x="693" y="593" text-anchor="middle" fill="#cfe0f4" font-size="13">？</text><text x="693" y="668" text-anchor="middle" fill="#f5c24b" font-size="13">id₅</text></g>
+      <text x="595" y="636" text-anchor="middle" fill="#58c2b8" font-size="15">5 Token ⇄ 5 ID 一一对应</text>
+    </g>
+    <g id="nsch" class="pp">
+      <rect x="790" y="522" width="400" height="166" rx="22" fill="#13233f" stroke="#4a6ba0" stroke-width="2.2"/>
+      <rect x="806" y="540" width="176" height="130" rx="16" fill="#0f1c33" stroke="#7fb3e8" stroke-width="2.6"/>
+      <text x="894" y="598" text-anchor="middle" fill="#dfe9f7" font-size="26">调度器</text>
+      <text x="894" y="634" text-anchor="middle" fill="#7fb3e8" font-size="19">管理请求队列</text>
+      <rect x="998" y="540" width="176" height="130" rx="16" fill="#0f1c33" stroke="#f5c24b" stroke-width="2.8"/>
+      <text x="1086" y="598" text-anchor="middle" fill="#ffe9b3" font-size="26">引　擎</text>
+      <text x="1086" y="634" text-anchor="middle" fill="#f5c24b" font-size="19">负责怎么算</text>
+      <text x="990" y="712" text-anchor="middle" fill="#7f97bd" font-size="17">同一进程 · 教学简化</text>
+      <g id="q41" class="pp"><rect x="822" y="548" rx="7" width="116" height="30" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.4"/><text x="880" y="569" text-anchor="middle" fill="#9fb6d8" font-size="16">#41 · 排队中</text></g>
+      <g id="q42" class="pp"><rect x="822" y="586" rx="7" width="116" height="30" fill="#1a3157" stroke="#f5c24b" stroke-width="2"/><text x="880" y="607" text-anchor="middle" fill="#ffe9b3" font-size="16">#42 · 本集主角</text></g>
+      <g id="q43" class="pp"><rect x="822" y="624" rx="7" width="116" height="30" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.4"/><text x="880" y="645" text-anchor="middle" fill="#9fb6d8" font-size="16">#43 · 排队中</text></g>
+      <line id="scan" class="dr" x1="822" y1="548" x2="822" y2="654" stroke="#58c2b8" stroke-width="3"/>
+    </g>
+    <g id="schpol" class="pp">
+      <text x="990" y="498" text-anchor="middle" fill="#58c2b8" font-size="18">调度器根据请求队列和调度策略，</text>
+      <text x="990" y="522" text-anchor="middle" fill="#58c2b8" font-size="18">决定本轮执行哪些请求（策略为场景示意）</text>
+    </g>
+    <g id="ndet" class="pp" opacity="0.45">
+      <rect x="1260" y="540" width="250" height="130" rx="20" fill="url(#panelG)" stroke="#3a5480" stroke-width="2"/>
+      <text x="1385" y="594" text-anchor="middle" fill="#8aa3c9" font-size="26">Detokenizer</text>
+      <text x="1385" y="632" text-anchor="middle" fill="#5f789f" font-size="19">本集样条之后展开</text>
+    </g>
+    <g id="napio" class="pp" opacity="0.45">
+      <rect x="1580" y="540" width="250" height="130" rx="20" fill="url(#panelG)" stroke="#3a5480" stroke-width="2"/>
+      <text x="1705" y="594" text-anchor="middle" fill="#8aa3c9" font-size="26">API Server</text>
+      <text x="1705" y="632" text-anchor="middle" fill="#5f789f" font-size="19">出口 · 本集样条之后</text>
+    </g>
+    <g id="ar1" class="pp"><line x1="400" y1="605" x2="464" y2="605" stroke="#f5c24b" stroke-width="3.4" marker-end="url(#arr)"/></g>
+    <g id="ar2" class="pp"><line x1="720" y1="605" x2="784" y2="605" stroke="#f5c24b" stroke-width="3.4" marker-end="url(#arr)"/></g>
+    <g id="req" class="pp">
+      <rect x="330" y="392" rx="14" width="180" height="58" fill="#1a3157" stroke="#f5c24b" stroke-width="2.2"/>
+      <text x="420" y="428" text-anchor="middle" fill="#ffe9b3" font-size="23">请求 · #42</text>
+    </g>
+    <g id="req2" class="pp"><rect x="-90" y="-29" rx="14" width="180" height="58" fill="#1a3157" stroke="#f5c24b" stroke-width="2.2"/><text x="0" y="7" text-anchor="middle" fill="#ffe9b3" font-size="23">请求 · #42</text></g>
+
+    <!-- ============ 引擎内部：Transformer（第 3 个 Token 作为 Query 示例） ============ -->
+    <g id="ipanel">
+      <rect x="2050" y="120" width="2700" height="880" rx="26" fill="#0f1c33" stroke="#3a5480" stroke-width="2.4"/>
+      <text id="ititle" class="pp" x="2110" y="190" fill="#e8eefb" font-size="32" font-weight="600">Transformer 内部（以第 3 个 Token 为 Query 示例）</text>
+      <text x="2110" y="228" fill="#7f97bd" font-size="20">ID 查表 → Hidden States → 线性投影分出 Q/K/V → RoPE（仅 Q/K）→ Attention</text>
+
+      <!-- ① ID Chips -->
+      <g id="ich0" class="pp"><rect x="2110" y="270" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="304" text-anchor="middle" fill="#cfe0f4" font-size="20">什么 · id₁</text></g>
+      <g id="ich1" class="pp"><rect x="2110" y="360" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="394" text-anchor="middle" fill="#cfe0f4" font-size="20">是 · id₂</text></g>
+      <g id="ich2" class="pp"><rect x="2110" y="450" rx="9" width="150" height="56" fill="#1a3157" stroke="#f5c24b" stroke-width="2.2"/><text x="2185" y="484" text-anchor="middle" fill="#ffe9b3" font-size="20">KV · id₃</text></g>
+      <g id="ich3" class="pp"><rect x="2110" y="540" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="574" text-anchor="middle" fill="#cfe0f4" font-size="20">Cache · id₄</text></g>
+      <g id="ich4" class="pp"><rect x="2110" y="630" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="664" text-anchor="middle" fill="#cfe0f4" font-size="20">？ · id₅</text></g>
+      <text id="ichlbl" class="pp" x="2110" y="722" fill="#9fb6d8" font-size="18">第 3 位（KV）为 Query 示例</text>
+
+      <!-- ② 查表箭头 -->
+      <g id="iar1" class="dr" stroke="#f5c24b" stroke-width="2.6">
+        <line x1="2270" y1="298" x2="2430" y2="298" marker-end="url(#arr)"/><line x1="2270" y1="388" x2="2430" y2="388" marker-end="url(#arr)"/>
+        <line x1="2270" y1="478" x2="2430" y2="478" stroke="#ffe9b3" marker-end="url(#arr)"/><line x1="2270" y1="568" x2="2430" y2="568" marker-end="url(#arr)"/>
+        <line x1="2270" y1="658" x2="2430" y2="658" marker-end="url(#arr)"/>
+      </g>
+      <!-- ③ 嵌入表 -->
+      <g id="itab" class="pp">
+        <rect x="2460" y="240" width="470" height="480" rx="16" fill="#0c1730" stroke="#43608f" stroke-width="1.8"/>
+        <text x="2480" y="272" fill="#9fb6d8" font-size="20">嵌入表 E（行＝词表，按 ID 取行）</text>
+        <g id="itabrows"></g>
+      </g>
+      <!-- ④ 抽取箭头 + Hidden States 行 -->
+      <g id="iext" class="dr" stroke="#f5c24b" stroke-width="2.6">
+        <line x1="2940" y1="360" x2="3044" y2="446" marker-end="url(#arr)"/>
+        <line x1="2940" y1="450" x2="3044" y2="464" marker-end="url(#arr)"/>
+        <line x1="2940" y1="540" x2="3044" y2="484" marker-end="url(#arr)"/>
+      </g>
+      <g id="hsrow"></g>
+      <text id="ihlbl" class="pp" x="3060" y="530" fill="#9fb6d8" font-size="19">Hidden States（隐藏状态，含位置信息）</text>
+
+      <!-- ⑤ 三路线性投影分流 -->
+      <g id="splitq" class="dr"><path d="M3412 462 C 3480 444, 3428 332, 3444 314" stroke="#f5c24b" stroke-width="3" fill="none" marker-end="url(#arr)"/></g>
+      <g id="splitk" class="dr"><path d="M3412 472 L 3444 470" stroke="#7fb3e8" stroke-width="3" fill="none" marker-end="url(#arrB)"/></g>
+      <g id="splitv" class="dr"><path d="M3412 482 C 3480 496, 3428 598, 3444 628" stroke="#79c7a3" stroke-width="3" fill="none" marker-end="url(#arrG)"/></g>
+      <g id="wq" class="pp"><rect x="3450" y="290" rx="9" width="96" height="40" fill="#2b2410" stroke="#f5c24b" stroke-width="2.2"/><text x="3498" y="317" text-anchor="middle" fill="#ffe9b3" font-size="17">W_Q 投影</text></g>
+      <g id="wk" class="pp"><rect x="3450" y="450" rx="9" width="96" height="40" fill="#12294a" stroke="#7fb3e8" stroke-width="2.2"/><text x="3498" y="477" text-anchor="middle" fill="#cfe4fa" font-size="17">W_K 投影</text></g>
+      <g id="wv" class="pp"><rect x="3450" y="610" rx="9" width="96" height="40" fill="#0f2b20" stroke="#79c7a3" stroke-width="2.2"/><text x="3498" y="637" text-anchor="middle" fill="#c9f2df" font-size="17">W_V 投影</text></g>
+
+      <!-- ⑥ Q/K/V 三行（Q 顶行 y280 / K 中行 y440 / V 底行 y640） -->
+      <g id="qrow"></g>
+      <g id="krow"></g>
+      <g id="vrow"></g>
+      <text id="qlbl" class="pp" x="3580" y="262" fill="#f5c24b" font-size="18">Q（查询 · 已过 RoPE）</text>
+      <text id="klbl" class="pp" x="3580" y="424" fill="#7fb3e8" font-size="18">K（键 · 已过 RoPE）</text>
+      <text id="vlbl" class="pp" x="3450" y="770" fill="#79c7a3" font-size="18">V（值 · 不经过 RoPE）</text>
+      <!-- RoPE 旋转站点（仅 Q/K 入口） -->
+      <g id="ropeQ" class="dr"><circle cx="3562" cy="310" r="22" fill="none" stroke="#f5c24b" stroke-width="2.4"/><line x1="3562" y1="310" x2="3562" y2="288" stroke="#f5c24b" stroke-width="3"/><text x="3448" y="246" fill="#f5c24b" font-size="16">RoPE 旋转 Q</text></g>
+      <g id="ropeK" class="dr"><circle cx="3562" cy="470" r="22" fill="none" stroke="#f5c24b" stroke-width="2.4"/><line x1="3562" y1="470" x2="3584" y2="470" stroke="#f5c24b" stroke-width="3"/><text x="3448" y="404" fill="#f5c24b" font-size="16">RoPE 旋转 K</text></g>
+      <g id="vbyp" class="dr"><path d="M3498 652 C 3524 666, 3550 670, 3574 672" fill="none" stroke="#79c7a3" stroke-width="2.2" stroke-dasharray="7 6"/><text x="3450" y="692" fill="#79c7a3" font-size="15">V 旁路</text><text x="3450" y="712" fill="#79c7a3" font-size="15">不经 RoPE</text></g>
+      <!-- Query=第 3 位 高亮 -->
+      <g id="q3hl" class="pp"><rect x="3772" y="272" rx="12" width="104" height="72" fill="none" stroke="#ffe9b3" stroke-width="3.4"/><text x="3826" y="374" text-anchor="middle" fill="#ffe9b3" font-size="17">Query＝第 3 个 Token（KV）</text></g>
+
+      <!-- ⑦ Attention 五阶段（Score→Scale→Mask→Softmax→×V 求和） -->
+      <g id="attzone"></g>
+      <g id="attscore" class="pp">
+        <text x="4180" y="228" fill="#e8eefb" font-size="20">Attention(Q₃, K₁..₅, V₁..₅)</text>
+        <text x="4180" y="256" fill="#9fb6d8" font-size="17">＝ Softmax( Q₃Kᵀ / √dₖ + Mask ) V</text>
+      </g>
+      <g id="scorelbl" class="pp"><text x="4150" y="288" fill="#7fb3e8" font-size="16">Score＝Q₃·Kᵢ 点积</text></g>
+      <g id="sbadge" class="pp"><text x="4460" y="462" fill="#f5c24b" font-size="16">÷√dₖ 缩放</text></g>
+      <g id="mtxt" class="pp"><text x="4460" y="494" fill="#e0705f" font-size="16">Causal Mask：第 4、5 位 −∞</text></g>
+      <g id="softtxt" class="pp"><text x="4460" y="526" fill="#58c2b8" font-size="16">Softmax → 权重（和为 1）</text></g>
+      <g id="sum" class="pp"><circle cx="4390" cy="470" r="36" fill="#1a3157" stroke="#f5c24b" stroke-width="2.6"/><text x="4390" y="480" text-anchor="middle" fill="#ffe9b3" font-size="28">Σ</text><text x="4390" y="538" text-anchor="middle" fill="#9fb6d8" font-size="17">加权求和</text></g>
+      <g id="outv" class="pp"><rect x="4440" y="700" rx="10" width="380" height="54" fill="#1a3157" stroke="#f5c24b" stroke-width="2.4"/><text x="4630" y="734" text-anchor="middle" fill="#ffe9b3" font-size="20">Attention 输出（融合了上下文）</text></g>
+    </g>
+  </svg>
+  </div>
+  <div id="sub"><span id="subtext"></span></div>
+  <div id="mark">SGLang 动画课 · 第 1 集 · G2.1 样条（30s · 1080p25 · 技术纠错版）</div>
+</div>
+<script>
+/* ===== G2.1 确定性时间轴：setT(t)（技术纠错版） ===== */
+const NS='http://www.w3.org/2000/svg';
+const E=id=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,x)=>a+(b-a)*x;
+const sstep=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
+const eio=x=>{x=clamp(x,0,1);return x<0.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;};
+const eob=x=>{x=clamp(x,0,1);const c=1.70158,c3=c+1;return 1+c3*Math.pow(x-1,3)+c*Math.pow(x-1,2);};
+let T=0;
+
+/* 摄影机关键帧 [t, cx, cy, scale] */
+const KF=[[0,330,210,1.60],[6.8,330,214,1.52],[9.2,640,520,1.02],[13.4,700,560,1.00],[16.8,990,600,1.14],[18.8,1600,580,1.02],[21.0,2350,540,0.78],[23.2,2600,520,0.90],[25.0,2900,500,0.92],[26.6,3700,480,0.80],[28.0,4020,470,0.78],[30.001,4050,470,0.78]];
+function cam(t){
+  let i=0; while(i<KF.length-2 && t>KF[i+1][0]) i++;
+  const a=KF[i],b=KF[i+1],x=sstep((t-a[0])/(b[0]-a[0]||1));
+  const cx=lerp(a[1],b[1],x),cy=lerp(a[2],b[2],x),s=lerp(a[3],b[3],x);
+  E('world').style.transform=`translate(${960-cx*s}px, ${540-cy*s}px) scale(${s})`;
+}
+function pop(id,t0,dur=0.4){const el=E(id),x=clamp((T-t0)/dur,0,1);
+  el.style.opacity=x<=0?0:Math.min(1,x*2.5);
+  el.style.transform=x<=0?'scale(0)':`scale(${eob(x)})`;}
+function fade(id,t0,dur=0.3,rev=false){const el=E(id),x=clamp((T-t0)/dur,0,1);
+  el.style.opacity=rev?1-x:x; el.style.pointerEvents='none';}
+function draw(id,t0,dur=0.5){const el=E(id),len=LEN[id];
+  const x=clamp((T-t0)/dur,0,1);
+  el.style.opacity=x<=0?0:1;
+  el.style.strokeDasharray=len; el.style.strokeDashoffset=len*(1-eio(x));}
+function move(id,t0,t1,x0,y0,x1,y1){const el=E(id),x=eio(clamp((T-t0)/(t1-t0),0,1));
+  const op=clamp((T-t0)/0.2,0,1)*clamp((t1-T)/0.2,0,1);
+  el.style.opacity=op<=0?0:1;
+  el.style.transform=`translate(${lerp(x0,x1,x)}px,${lerp(y0,y1,x)}px)`;}
+
+const LEN={};
+function build(){
+  const rows=E('itabrows'); const cols=['#7fb3e8','#79c7a3','#f5c24b','#b48ce8','#e0705f','#58c2b8','#7fb3e8','#79c7a3','#f5c24b','#b48ce8'];
+  for(let r=0;r<5;r++){const g=document.createElementNS(NS,'g');g.setAttribute('id','itr'+r);
+    for(let c=0;c<10;c++){const rc=document.createElementNS(NS,'rect');
+      rc.setAttribute('x',2480+c*44);rc.setAttribute('y',290+r*82);rc.setAttribute('width',37);rc.setAttribute('height',58);
+      rc.setAttribute('rx',5);rc.setAttribute('fill',cols[c]);rc.setAttribute('opacity',0.16+0.1*((r+c)%3));g.appendChild(rc);}
+    rows.appendChild(g);}
+  /* Hidden States 行（水平 5 块） */
+  const hs=E('hsrow');
+  for(let i=0;i<5;i++){
+    const g=document.createElementNS(NS,'g');g.setAttribute('id','ih'+i);g.setAttribute('class','pp');
+    const rc=document.createElementNS(NS,'rect');
+    rc.setAttribute('x',3060+i*72);rc.setAttribute('y',438);rc.setAttribute('width',64);rc.setAttribute('height',56);rc.setAttribute('rx',9);
+    rc.setAttribute('fill','url(#hrowG)');rc.setAttribute('stroke',i===2?'#f5c24b':'#4a6ba0');rc.setAttribute('stroke-width',i===2?2.6:1.8);
+    const tx=document.createElementNS(NS,'text');tx.setAttribute('x',3060+i*72+32);tx.setAttribute('y',472);tx.setAttribute('text-anchor','middle');tx.setAttribute('fill','#dfe9f7');tx.setAttribute('font-size','16');tx.textContent='H'+('₁₂₃₄₅'[i]);
+    g.appendChild(rc);g.appendChild(tx);hs.appendChild(g);}
+  /* Q/K/V 三行 */
+  function lane(pid,fill,stroke,labels,y,ids){
+    const g=E(pid);
+    for(let i=0;i<5;i++){
+      const b=document.createElementNS(NS,'g');b.setAttribute('id',ids+i);b.setAttribute('class','pp');
+      const rc=document.createElementNS(NS,'rect');
+      rc.setAttribute('x',3580+i*100);rc.setAttribute('y',y);rc.setAttribute('width',92);rc.setAttribute('height',60);rc.setAttribute('rx',10);
+      rc.setAttribute('fill',fill);rc.setAttribute('stroke',stroke);rc.setAttribute('stroke-width',2.2);
+      const tx=document.createElementNS(NS,'text');tx.setAttribute('x',3580+i*100+46);tx.setAttribute('y',y+26);tx.setAttribute('text-anchor','middle');tx.setAttribute('fill','#dfe9f7');tx.setAttribute('font-size','19');tx.textContent=labels[i];
+      const pt=document.createElementNS(NS,'text');pt.setAttribute('x',3580+i*100+46);pt.setAttribute('y',y+48);pt.setAttribute('text-anchor','middle');pt.setAttribute('fill','#7f97bd');pt.setAttribute('font-size','12');pt.textContent='位置'+(i+1);
+      b.appendChild(rc);b.appendChild(tx);b.appendChild(pt);g.appendChild(b);}
+  }
+  lane('qrow','#2b2410','#f5c24b',['Q₁','Q₂','Q₃','Q₄','Q₅'],280,'iq');
+  lane('krow','#12294a','#7fb3e8',['K₁','K₂','K₃','K₄','K₅'],440,'ik');
+  lane('vrow','#0f2b20','#79c7a3',['V₁','V₂','V₃','V₄','V₅'],640,'iv');
+  /* Attention 五阶段：Score 列（x4180 起，5 格对齐 K₁..K₅ 的视觉层） */
+  const az=E('attzone');
+  for(let i=0;i<5;i++){
+    const y=300+i*76;
+    const cn=document.createElementNS(NS,'line');
+    cn.setAttribute('x1',3672+i*100);cn.setAttribute('y1',442);cn.setAttribute('x2',4146);cn.setAttribute('y2',y+28);
+    cn.setAttribute('stroke','#3a5480');cn.setAttribute('stroke-width','2');az.appendChild(cn);
+    const cell=document.createElementNS(NS,'g');cell.setAttribute('id','sc'+i);cell.setAttribute('class','pp');
+    const rc=document.createElementNS(NS,'rect');rc.setAttribute('x',4150);rc.setAttribute('y',y);rc.setAttribute('width',80);rc.setAttribute('height',56);rc.setAttribute('rx',9);
+    rc.setAttribute('fill',i<3?'#16294a':'#2a1a1f');rc.setAttribute('stroke',i<3?'#58c2b8':'#e0705f');rc.setAttribute('stroke-width','2');
+    const wbar=document.createElementNS(NS,'rect');wbar.setAttribute('id','wbar'+i);wbar.setAttribute('x',4156);wbar.setAttribute('y',y+40);wbar.setAttribute('width',0);wbar.setAttribute('height',8);wbar.setAttribute('rx',4);
+    wbar.setAttribute('fill',i<3?'#58c2b8':'#e0705f');wbar.setAttribute('opacity','0.95');
+    const tv=document.createElementNS(NS,'text');tv.setAttribute('id','stv'+i);tv.setAttribute('x',4190);tv.setAttribute('y',y+24);tv.setAttribute('text-anchor','middle');tv.setAttribute('fill','#dfe9f7');tv.setAttribute('font-size','18');
+    const pl=document.createElementNS(NS,'text');pl.setAttribute('x',4140);pl.setAttribute('y',y+34);pl.setAttribute('text-anchor','end');pl.setAttribute('fill','#7f97bd');pl.setAttribute('font-size','14');pl.textContent='K'+('₁₂₃₄₅'[i]);
+    cell.appendChild(rc);cell.appendChild(wbar);cell.appendChild(tv);cell.appendChild(pl);az.appendChild(cell);
+  }
+  const q3l=document.createElementNS(NS,'line');
+  q3l.setAttribute('x1',3826);q3l.setAttribute('y1',344);q3l.setAttribute('x2',4146);q3l.setAttribute('y2',288);
+  q3l.setAttribute('stroke','#f5c24b');q3l.setAttribute('stroke-width','2.4');q3l.setAttribute('id','q3line');q3l.setAttribute('class','dr');
+  az.appendChild(q3l);
+  /* 权重×V：V_i → Σ 连线与 ×w 标签（第 4、5 位权重为 0） */
+  const con=E('attzone');
+  const WLBL=['×0.27','×0.40','×0.33','×0','×0'];
+  for(let i=0;i<5;i++){
+    const p=document.createElementNS(NS,'path');
+    p.setAttribute('d',`M${3580+i*100+92} 700 L ${4356} 474`);
+    p.setAttribute('fill','none');p.setAttribute('stroke',i<3?'#79c7a3':'#3a5480');p.setAttribute('stroke-width',i<3?2.4:1.6);
+    p.setAttribute('stroke-dasharray',i<3?'':'6 6');p.setAttribute('id','wcon'+i);p.setAttribute('class','dr');
+    if(i<3)p.setAttribute('marker-end','url(#arrG)');
+    az.appendChild(p);
+    const tg=document.createElementNS(NS,'g');tg.setAttribute('id','vtag'+i);tg.setAttribute('class','pp');
+    const tt=document.createElementNS(NS,'text');tt.setAttribute('x',3626+i*100);tt.setAttribute('y',740);tt.setAttribute('text-anchor','middle');tt.setAttribute('fill',i<3?'#79c7a3':'#7f97bd');tt.setAttribute('font-size','16');tt.textContent=WLBL[i];
+    tg.appendChild(tt);con.appendChild(tg);
+  }
+  ['rail','scan','qcuts','splitq','splitk','splitv','ropeQ','ropeK','vbyp','q3line','wcon0','wcon1','wcon2','wcon3','wcon4'].forEach(id=>{const p=E(id);if(p&&p.getTotalLength){try{LEN[id]=p.getTotalLength();}catch(e){LEN[id]=500;}}});
+}
+build();
+
+/* 字幕（与配音逐句对齐；Tingting 为占位音） */
+const SUB=[
+ [0.50,5.19,'按下回车。你的问题，先被切成一块一块的 Token。'],
+ [8.20,12.87,'请求拿到号牌，交给 Tokenizer，变成一串编号。'],
+ [14.00,18.05,'调度器根据队列和调度策略，决定这一轮算谁。'],
+ [20.25,25.77,'进入 Transformer：查表得到隐藏状态，再分成 Q、K、V。'],
+ [25.79,29.99,'第 3 个 Q 只看前三，后两位被屏蔽——注意力。']
+];
+function sub(t){
+  const box=E('sub'),tx=E('subtext');let s=null;
+  for(const [a,b,txt] of SUB){ if(t>=a&&t<=b){s=txt;break;} }
+  if(s){box.style.opacity=1;tx.textContent=s;}else{box.style.opacity=0;}
+}
+
+const SCORE=['4.1','5.2','4.6','3.9','3.7'], SCALED=['1.45','1.84','1.63','1.38','1.31'], WT=['27%','40%','33%','0%','0%'];
+function setT(t){
+  t=Math.max(0,Math.min(30,t)); T=t; window.T=T;
+  cam(t); sub(t);
+  /* ---- 0-8s：输入 + Tokenizer 切分（P0-1：边界→分离→ID 逐个映射） ---- */
+  fade('ebox',0.2,0.4);
+  const press=clamp((t-0.9)/0.4,0,1);
+  E('ebtn').style.transformBox='fill-box';E('ebtn').style.transformOrigin='center';
+  E('ebtn').style.transform=`scaleY(${1-0.18*Math.sin(Math.min(press*Math.PI,Math.PI))})`;
+  E('pclipr').setAttribute('width',String(560*clamp((t-1.5)/1.6,0,1)));
+  draw('qcuts',3.2,0.7);
+  pop('qc0',3.9);pop('qc1',4.3);pop('qc2',4.7);pop('qc3',5.1);pop('qc4',5.5);
+  pop('qnote',6.1,0.3);
+  /* ---- 8-20s：API → Tokenizer（5⇄5）→ Scheduler（P0-5 文案） ---- */
+  draw('rail',7.4,1.4);
+  pop('napi',8.2); pop('req',8.6);
+  move('req',9.0,9.9,330,392,80,392);
+  pop('ar1',9.8,0.25); pop('ntok',10.2);
+  pop('tid0',10.6);pop('tid1',11.0);pop('tid2',11.4);pop('tid3',11.8);pop('tid4',12.2);
+  pop('ar2',12.9,0.25); pop('nsch',13.5); pop('schpol',13.8,0.35);
+  pop('q41',14.2);pop('q42',14.6);pop('q43',15.0);
+  draw('scan',15.4,1.0); fade('scan',16.4,0.3,true);
+  move('req2',16.6,17.5,975,600,1086,600);
+  fade('req2',17.8,0.35,true);
+  /* ---- 20-30s：Transformer（P0-2/3/4） ---- */
+  pop('ipanel',18.6,0.5);
+  pop('ititle',20.3);
+  pop('ich0',20.6);pop('ich1',20.9);pop('ich2',21.2);pop('ich3',21.5);pop('ich4',21.8);
+  pop('ichlbl',22.0,0.3);
+  fade('iar1',21.8,0.6);
+  pop('itab',21.3,0.5);
+  fade('itr0',22.1,0.3);fade('itr1',22.3,0.3);fade('itr2',22.5,0.3);fade('itr3',22.7,0.3);fade('itr4',22.9,0.3);
+  fade('iext',23.0,0.5);
+  pop('ih0',23.1);pop('ih1',23.3);pop('ih2',23.5);pop('ih3',23.7);pop('ih4',23.9);
+  pop('ihlbl',24.0,0.3);
+  /* 分流：Hidden → W_Q/W_K/W_V（P0-2：线性投影；RoPE 仅 Q/K） */
+  draw('splitq',24.2,0.4);pop('wq',24.5);
+  draw('splitk',24.6,0.4);pop('wk',24.9);
+  draw('splitv',25.0,0.4);pop('wv',25.3);
+  pop('iq0',25.5);pop('iq1',25.6);pop('iq2',25.7);pop('iq3',25.8);pop('iq4',25.9);
+  pop('ik0',25.7);pop('ik1',25.8);pop('ik2',25.9);pop('ik3',26.0);pop('ik4',26.1);
+  pop('iv0',25.9);pop('iv1',26.0);pop('iv2',26.1);pop('iv3',26.2);pop('iv4',26.3);
+  pop('qlbl',26.0,0.3);pop('klbl',26.1,0.3);pop('vlbl',26.2,0.3);
+  /* RoPE：仅 Q/K 旋转（旋转刻度持续），V 旁路 */
+  draw('ropeQ',25.9,0.4);draw('ropeK',26.0,0.4);draw('vbyp',26.3,0.5);
+  const ang=(T*140)%360;
+  E('ropeQ').querySelector('line').setAttribute('transform',`rotate(${ang} 3562 310)`);
+  E('ropeK').querySelector('line').setAttribute('transform',`rotate(${ang} 3562 470)`);
+  /* Query = 第 3 个 Token（P0-4） */
+  pop('q3hl',26.5,0.35);
+  /* Attention 五阶段（P0-3） */
+  pop('attscore',26.7,0.35);
+  pop('scorelbl',27.0,0.3);
+  draw('q3line',26.9,0.4);
+  fade('wcon0',29.0,0.4);fade('wcon1',29.0,0.4);fade('wcon2',29.0,0.4);fade('wcon3',29.0,0.4);fade('wcon4',29.0,0.4);
+  pop('vtag0',29.1,0.25);pop('vtag1',29.1,0.25);pop('vtag2',29.1,0.25);pop('vtag3',29.1,0.25);pop('vtag4',29.1,0.25);
+  pop('sc0',27.1);pop('sc1',27.2);pop('sc2',27.3);pop('sc3',27.4);pop('sc4',27.5);
+  /* Score → Scale → Mask → Softmax：单元格文本由 T 决定 */
+  for(let i=0;i<5;i++){
+    const tv=E('stv'+i);
+    let v;
+    if(t<27.0){ v=''; }
+    else if(t<27.55){ v=SCORE[i]; }
+    else if(t<28.10){ v=SCALED[i]; }
+    else if(i<3){ v=WT[i]; } else { v='−∞'; }
+    tv.textContent=v;
+  }
+  pop('sbadge',27.05,0.3);
+  pop('mtxt',27.6,0.3);
+  pop('softtxt',28.15,0.3);
+  const hw=[0.9,0.9,0.83,0,0];
+  for(let i=0;i<5;i++){E('wbar'+i).setAttribute('width',String(74*hw[i]*clamp((t-28.15)/0.55,0,1)));}
+  /* 权重 × V → Σ 加权求和 */
+  pop('sum',28.9,0.3);
+  pop('outv',29.3,0.3);
+}
+window.setT=setT;
+setT(0);
+</script>
+</body>
+</html>
