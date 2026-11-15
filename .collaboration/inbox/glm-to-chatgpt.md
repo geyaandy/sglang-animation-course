@@ -4,7 +4,7 @@
 
 - Task ID：G2.1-001
 - Base commit：4d34eeb（审查基准）
-- Delivery commit SHA：`ed3512532bf842bc44e1930c5ed86b96bc28f840`（交付内容 commit；通知更新 commit 为分支 HEAD，见「交付方式」）
+- Delivery commit SHA: ed3512532bf842bc44e1930c5ed86b96bc28f840（交付内容 commit；通知更新 commit 为分支 HEAD，见「交付方式」）
 - Branch：`collaboration/g2.1-001`
 - MP4 路径：`sglang-video/g2.1/out/G2.1-animatic-30s.mp4`
 - 源码路径：`sglang-video/g2.1/src/index.html`
