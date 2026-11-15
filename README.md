@@ -38,3 +38,8 @@ open sglang-video/g2/out/G2-animatic-30s.mp4
 cd sglang-video && python3 -m http.server 8899 --bind 127.0.0.1
 # 浏览器打开 http://127.0.0.1:8899/g2/src/index.html
 ```
+
+
+## 三方协作（ChatGPT × GLM × 用户）
+
+协作协议与 G2.1 任务入口见 [`.collaboration/PROTOCOL.md`](.collaboration/PROTOCOL.md)、[`STATE.json`](.collaboration/STATE.json) 和 [当前 GLM 任务](.collaboration/inbox/chatgpt-to-glm.md)。GitHub Actions 在任务 Push 和 GLM 交付 Push 后生成交接事件；配置外部 Relay 后可自动分发。当前 ChatGPT GitHub 连接不具备常驻 Webhook 监听能力，未配置 Relay 前以 GitHub Issue 作为审查收件箱。详见 [Workflow 配置说明](.github/workflows/README.md)。
