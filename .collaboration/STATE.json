@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "project": "sglang-animation-course",
+  "mode": "semi_automatic",
+  "trigger": "glm_push",
+  "current_task_id": "G2.1-001",
+  "current_task_status": "ready_for_glm",
+  "next_actor": "glm",
+  "base_ref": "main",
+  "base_commit": "4d34eeb",
+  "active_branch": "collaboration/bootstrap-g2.1",
+  "revision": 0,
+  "max_revisions": 3,
+  "chatgpt_relay_configured": false,
+  "glm_relay_configured": false,
+  "notes": [
+    "Bootstrap only; external webhook relays are not configured.",
+    "GitHub Actions cannot directly wake the current ChatGPT conversation.",
+    "G2 is immutable; G2.1 is delivered in its own directory."
+  ]
+}
