@@ -17,6 +17,7 @@ sglang-video/
 │       ├── G1-frame2-stage.png
 │       └── G1-frame3-kvcache.png
 └── g2/                              ← G2 30 秒动态样条（已提交，未验收）
+    └── review/                      ← 外部 AI 审查材料（由成片只读派生，见 §7）
     ├── src/
     │   └── index.html               全部工程源码（HTML+SVG+确定性时间轴 JS）
     ├── audio/
@@ -77,3 +78,17 @@ cd sglang-video && python3 -m http.server 8899 --bind 127.0.0.1
 3. G2 时间轴为确定性（setT 驱动），与 G1 一致的设计令牌；若改 Remotion 主管线，本 HTML 时间轴可直接移植为 Remotion 组件（映射关系：setT→useCurrentFrame/25）。
 4. Remotion 授权核查（方案 §3.6.1）尚未执行——本次样条改用"确定性 HTML + 浏览器渲染 + ffmpeg"纯开源管线，规避了该依赖；若切换 Remotion 须先完成授权登记。
 5. Frame 3"写入层 N"标签与位置 6 格间距偏紧，G2 精修时顺带调整（方案附录 F 已记录）。
+
+## 7. 审查材料索引（`g2/review/`，2026-11-16 生成）
+
+由 `out/G2-animatic-30s.mp4` **只读派生**（未重渲染、未改源码、未重配音），供外部 AI 审查。完整参数与验证记录见 [`g2/review/delivery-report.md`](g2/review/delivery-report.md)。
+
+| 文件 | 规格 | 用途 |
+|---|---|---|
+| [`g2/review/preview.gif`](g2/review/preview.gif) | 960×540 · 240 帧 · 8fps · 30.01s · 16.5MB | 无播放器快速全览 |
+| [`g2/review/contact-sheet.jpg`](g2/review/contact-sheet.jpg) | 2880×1350 · 6×5 · 每秒一帧 t=0–29s 带时间戳 | 逐秒节奏审查 |
+| `g2/review/frames/f_001.jpg … f_060.jpg` | 1280×720 JPEG · 每 0.5s 一张（t=(N−1)×0.5s，覆盖 0–29.5s） | 逐关键帧细审 |
+| [`g2/review/audio.mp3`](g2/review/audio.mp3) | 128kbps · 44.1kHz 立体声 · 30.0s | 独立听审 |
+| [`g2/review/delivery-report.md`](g2/review/delivery-report.md) | 来源成片参数、验证记录、可复现命令 | 审查依据 |
+
+配套原始材料：成片 `g2/out/G2-animatic-30s.mp4`（30.04s · 1920×1080 · 25fps · H.264+AAC）+ 字幕 `g2/out/G2-subtitles.srt`。

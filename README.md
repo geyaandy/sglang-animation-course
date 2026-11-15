@@ -12,6 +12,7 @@
 | [`sglang-video/README.md`](sglang-video/README.md) | 交付包说明：字体、渲染工具链、分辨率、文件映射、G2 音画同步节拍合约、再生成命令 |
 | `sglang-video/g1/` | G1 三张关键视觉帧：SVG 源文件 + 1920×1080 实渲染 PNG（开场 / 连续舞台 / KV Cache 特写） |
 | `sglang-video/g2/` | G2 30 秒动态样条：`out/G2-animatic-30s.mp4`（1080p25 H.264+AAC）+ `src/index.html` 确定性时间轴源码 + 5 段中文配音 + `out/G2-subtitles.srt` 字幕 + 验收检查帧 |
+| `sglang-video/g2/review/` | **外部 AI 审查材料**（2026-11-16，由成片只读派生）：`preview.gif`（960px·8fps 全览）、`contact-sheet.jpg`（每秒一帧 30 格带时间戳）、`frames/`（每 0.5s 一张 1280px JPEG×60）、`audio.mp3`（128kbps 音轨）、`delivery-report.md`（参数与验证记录） |
 | [`reviews/`](reviews/) | 外部评审记录：v1 修订清单、v2 复审意见（P0/P1 逐条吸收记录见主文档附录 D） |
 
 ## G2 样条要点
