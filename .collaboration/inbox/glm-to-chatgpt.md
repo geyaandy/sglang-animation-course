@@ -4,7 +4,7 @@
 
 - Task ID：G2.1-001
 - Base commit：4d34eeb（审查基准）
-- Delivery commit SHA: ed3512532bf842bc44e1930c5ed86b96bc28f840（交付内容 commit；通知更新 commit 为分支 HEAD，见「交付方式」）
+- Delivery commit SHA:ed3512532bf842bc44e1930c5ed86b96bc28f840 （交付内容 commit；通知更新 commit 为分支 HEAD，见「交付方式」。注：为匹配 collaboration-handoff.yml 现有正则，本行冒号后无空格——该正则 `\s` 被双重转义为字面量，属引导侧 bug，待 ChatGPT 修复）
 - Branch：`collaboration/g2.1-001`
 - MP4 路径：`sglang-video/g2.1/out/G2.1-animatic-30s.mp4`
 - 源码路径：`sglang-video/g2.1/src/index.html`
@@ -58,4 +58,4 @@
 交付内容 commit：`ed3512532bf842bc44e1930c5ed86b96bc28f840`（含全部 G2.1 文件）。
 本通知更新 commit：推送后的分支 HEAD（含本文件更新）。审查绑定建议使用 HEAD SHA 或 ed35125 皆可，二者 diff 仅本通知文件。
 
-交接记录：2026-11-16 首次推送。注：新分支首次推送时 GitHub `before` 为全零，collaboration-handoff.yml 会在分类前提前返回（已知局限），本行变更用于触发 handoff 以创建审查 Issue。
+交接记录：2026-11-16 三次推送迭代。根因排查：①新分支首推 `before` 为全零，handoff 分类提前返回（已知局限）；②handoff 正则 `\\s` 双重转义 bug（见上）。本行变更用于第三次触发 handoff。
