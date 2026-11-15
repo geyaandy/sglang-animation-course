@@ -1,0 +1,110 @@
+name: Collaboration handoff
+
+on:
+  push:
+    branches: [main, "collaboration/**"]
+    paths:
+      - ".collaboration/**"
+      - "sglang-video/g2.1/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: collaboration-handoff-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  handoff:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Classify push and notify relays
+        uses: actions/github-script@v7
+        env:
+          GLM_TASK_WEBHOOK_URL: ${{ secrets.GLM_TASK_WEBHOOK_URL }}
+          CHATGPT_REVIEW_WEBHOOK_URL: ${{ secrets.CHATGPT_REVIEW_WEBHOOK_URL }}
+          COLLABORATION_WEBHOOK_SECRET: ${{ secrets.COLLABORATION_WEBHOOK_SECRET }}
+        with:
+          script: |
+            const before = context.payload.before;
+            const after = context.sha;
+            if (!before || /^0+$/.test(before)) return;
+
+            const cmp = await github.rest.repos.compareCommits({
+              owner: context.repo.owner, repo: context.repo.repo,
+              base: before, head: after
+            });
+            const files = (cmp.data.files || []).map(f => f.filename);
+            const taskChanged = files.includes(".collaboration/inbox/chatgpt-to-glm.md");
+            const deliveryChanged =
+              files.includes(".collaboration/inbox/glm-to-chatgpt.md") ||
+              files.includes("sglang-video/g2.1/G2.1-review-report.md") ||
+              files.some(p => p.startsWith("sglang-video/g2.1/review/"));
+            if (!taskChanged && !deliveryChanged) return;
+
+            let taskId = "unknown";
+            try {
+              const fs = require("fs");
+              taskId = JSON.parse(fs.readFileSync(".collaboration/STATE.json", "utf8")).current_task_id || taskId;
+            } catch (e) { core.warning("STATE.json unavailable: " + e.message); }
+
+            const payload = {
+              event_id: context.repo.owner + "/" + context.repo.repo + ":" + after + ":" + (taskChanged ? "task_ready" : "review_requested"),
+              event_type: taskChanged ? "task_ready" : "review_requested",
+              repository: context.repo.owner + "/" + context.repo.repo,
+              ref: context.ref, commit_sha: after, task_id: taskId,
+              changed_files: files,
+              delivery_url: "https://github.com/" + context.repo.owner + "/" + context.repo.repo + "/commit/" + after
+            };
+
+            async function post(url, label) {
+              if (!url) {
+                core.warning(label + " not configured; no Agent was awakened.");
+                return;
+              }
+              const headers = { "content-type": "application/json" };
+              if (process.env.COLLABORATION_WEBHOOK_SECRET) headers["x-collaboration-secret"] = process.env.COLLABORATION_WEBHOOK_SECRET;
+              const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(payload) });
+              if (!res.ok) throw new Error(label + " returned HTTP " + res.status);
+              core.info(label + " accepted event.");
+            }
+
+            if (taskChanged) await post(process.env.GLM_TASK_WEBHOOK_URL, "GLM task relay");
+
+            if (deliveryChanged) {
+              const title = "[ChatGPT review] " + taskId + " @ " + after.slice(0, 7);
+              const openIssues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner, repo: context.repo.repo, state: "open", per_page: 100
+              });
+              const existing = openIssues.data.find(i => i.title === title);
+              if (!existing) {
+                const body = [
+                  "GLM delivery/update requests ChatGPT review.",
+                  "",
+                  "- Task: " + taskId,
+                  "- Commit: " + after,
+                  "- Ref: " + context.ref,
+                  "- Changed files:",
+                  ...files.map(f => "  - " + f),
+                  "",
+                  "[Inspect commit](https://github.com/" + context.repo.owner + "/" + context.repo.repo + "/commit/" + after + ")",
+                  "",
+                  "This Issue is a handoff record, not proof that ChatGPT has started or completed review."
+                ].join("\n");
+                const issue = await github.rest.issues.create({
+                  owner: context.repo.owner, repo: context.repo.repo, title, body
+                });
+                core.info("Created review Issue #" + issue.data.number);
+              } else {
+                core.info("Reusing review Issue #" + existing.number);
+              }
+              await post(process.env.CHATGPT_REVIEW_WEBHOOK_URL, "ChatGPT review relay");
+            }
