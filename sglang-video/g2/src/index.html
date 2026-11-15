@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>G2 动态样条 · SGLang 动画课第 1 集</title>
+<style>
+  html,body{margin:0;padding:0;background:#0a1524;}
+  #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(120% 120% at 50% 36%, #16294a 0%, #0e1c34 55%, #0a1524 100%);font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;}
+  #world{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;will-change:transform;}
+  #scene{overflow:visible;}
+  .pp{opacity:0;transform-box:fill-box;transform-origin:center;}
+  .dr{opacity:0;}
+  text{font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;}
+  #sub{position:absolute;left:0;bottom:0;width:1920px;height:96px;display:flex;align-items:center;justify-content:center;background:rgba(10,21,36,0.55);opacity:0;}
+  #subtext{color:#eef4fc;font-size:34px;letter-spacing:1px;}
+  #mark{position:absolute;left:44px;top:30px;color:#c9d8ee;font-size:22px;opacity:.85;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="world">
+  <svg id="scene" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <defs>
+      <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.6" fill="#7fa8d9" opacity="0.10"/></pattern>
+      <linearGradient id="panelG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#13233f"/><stop offset="100%" stop-color="#0f1c33"/></linearGradient>
+      <linearGradient id="goldG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffd977"/><stop offset="100%" stop-color="#e8b13f"/></linearGradient>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f5c24b"/></marker>
+      <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#79c7a3"/></marker>
+      <marker id="arrT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#58c2b8"/></marker>
+    </defs>
+    <rect x="-600" y="-400" width="5600" height="1900" fill="url(#dots)"/>
+
+    <!-- ============ 主舞台：浏览器 + 流水线 ============ -->
+    <g id="brw">
+      <rect x="120" y="96" width="420" height="230" rx="18" fill="url(#panelG)" stroke="#3a5480" stroke-width="2"/>
+      <text x="150" y="140" fill="#9fb6d8" font-size="20">A 区 · 用户视角</text>
+      <g id="ebox"><rect x="150" y="160" width="300" height="42" rx="21" fill="#0c1730" stroke="#43608f" stroke-width="1.6"/></g>
+      <g id="ebtn"><rect x="460" y="168" width="52" height="27" rx="13.5" fill="url(#goldG)"/></g>
+      <clipPath id="pclip"><rect id="pclipr" x="168" y="164" width="0" height="36"/></clipPath>
+      <text x="168" y="188" fill="#dfe9f7" font-size="20" clip-path="url(#pclip)">什么是 KV Cache？</text>
+      <!-- 问题 token 链（5 块，教学切分） -->
+      <g id="qc0" class="pp"><rect x="150" y="222" rx="8" width="56" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="178" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">什么</text><line x1="156" y1="249" x2="200" y2="249" stroke="#f5c24b" stroke-width="2.4"/></g>
+      <g id="qc1" class="pp"><rect x="216" y="222" rx="8" width="44" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="238" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">是</text><line x1="222" y1="249" x2="254" y2="249" stroke="#f5c24b" stroke-width="2.4"/></g>
+      <g id="qc2" class="pp"><rect x="270" y="222" rx="8" width="52" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="296" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">KV</text><line x1="276" y1="249" x2="316" y2="249" stroke="#f5c24b" stroke-width="2.4"/></g>
+      <g id="qc3" class="pp"><rect x="332" y="222" rx="8" width="72" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="368" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">Cache</text><line x1="338" y1="249" x2="398" y2="249" stroke="#f5c24b" stroke-width="2.4"/></g>
+      <g id="qc4" class="pp"><rect x="414" y="222" rx="8" width="34" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/><text x="431" y="245" text-anchor="middle" fill="#cfe0f4" font-size="18">？</text><line x1="420" y1="249" x2="442" y2="249" stroke="#f5c24b" stroke-width="2.4"/></g>
+      <g id="qnote" class="pp"><text x="150" y="292" fill="#f5c24b" font-size="16">教学切分示意 · 非真实 Qwen3 Tokenizer 输出</text></g>
+    </g>
+
+    <!-- 轨道（虚线基准） -->
+    <line id="rail" class="dr" x1="150" y1="470" x2="1830" y2="470" stroke="#2c4470" stroke-width="3" stroke-dasharray="3 9"/>
+
+    <!-- 节点 -->
+    <g id="napi" class="pp">
+      <rect x="150" y="540" width="250" height="130" rx="20" fill="url(#panelG)" stroke="#7fb3e8" stroke-width="2.6"/>
+      <text x="275" y="594" text-anchor="middle" fill="#dfe9f7" font-size="28">API Server</text>
+      <text x="275" y="632" text-anchor="middle" fill="#7fb3e8" font-size="21">前台 · 入口</text>
+    </g>
+    <g id="ntok" class="pp">
+      <rect x="470" y="528" width="250" height="154" rx="20" fill="url(#panelG)" stroke="#7fb3e8" stroke-width="2.6"/>
+      <text x="595" y="566" text-anchor="middle" fill="#dfe9f7" font-size="26">Tokenizer</text>
+      <g id="tid0" class="pp"><rect x="492" y="588" rx="7" width="88" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.4"/><text x="536" y="611" text-anchor="middle" fill="#cfe0f4" font-size="16">什么</text><text x="536" y="664" text-anchor="middle" fill="#f5c24b" font-size="15">id₁</text></g>
+      <g id="tid1" class="pp"><rect x="588" y="588" rx="7" width="66" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.4"/><text x="621" y="611" text-anchor="middle" fill="#cfe0f4" font-size="16">是</text><text x="621" y="664" text-anchor="middle" fill="#f5c24b" font-size="15">id₂</text></g>
+      <g id="tid2" class="pp"><rect x="662" y="588" rx="7" width="48" height="34" fill="#16294a" stroke="#4a6ba0" stroke-width="1.4" transform="translate(0,0)"/><text x="686" y="611" text-anchor="middle" fill="#cfe0f4" font-size="15">KV</text><text x="686" y="664" text-anchor="middle" fill="#f5c24b" font-size="15">id₃</text></g>
+    </g>
+    <g id="nsch" class="pp">
+      <rect x="790" y="522" width="400" height="166" rx="22" fill="#13233f" stroke="#4a6ba0" stroke-width="2.2"/>
+      <rect x="806" y="540" width="176" height="130" rx="16" fill="#0f1c33" stroke="#7fb3e8" stroke-width="2.6"/>
+      <text x="894" y="598" text-anchor="middle" fill="#dfe9f7" font-size="26">调度器</text>
+      <text x="894" y="634" text-anchor="middle" fill="#7fb3e8" font-size="19">决定算谁</text>
+      <rect x="998" y="540" width="176" height="130" rx="16" fill="#0f1c33" stroke="#f5c24b" stroke-width="2.8"/>
+      <text x="1086" y="598" text-anchor="middle" fill="#ffe9b3" font-size="26">引　擎</text>
+      <text x="1086" y="634" text-anchor="middle" fill="#f5c24b" font-size="19">负责怎么算</text>
+      <text x="990" y="712" text-anchor="middle" fill="#7f97bd" font-size="17">同一进程 · 教学简化</text>
+      <g id="q41" class="pp"><rect x="822" y="548" rx="7" width="116" height="30" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.4"/><text x="880" y="569" text-anchor="middle" fill="#9fb6d8" font-size="16">#41 · 排队中</text></g>
+      <g id="q42" class="pp"><rect x="822" y="586" rx="7" width="116" height="30" fill="#1a3157" stroke="#f5c24b" stroke-width="2"/><text x="880" y="607" text-anchor="middle" fill="#ffe9b3" font-size="16">#42 · 本集主角</text></g>
+      <g id="q43" class="pp"><rect x="822" y="624" rx="7" width="116" height="30" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.4"/><text x="880" y="645" text-anchor="middle" fill="#9fb6d8" font-size="16">#43 · 排队中</text></g>
+      <line id="scan" class="dr" x1="822" y1="548" x2="822" y2="654" stroke="#58c2b8" stroke-width="3"/>
+      <text id="pri" class="dr" x="806" y="514" fill="#58c2b8" font-size="17">Prefill 优先 · 能组新批，先算新请求</text>
+    </g>
+    <g id="req2" class="pp"><rect x="-90" y="-29" rx="14" width="180" height="58" fill="#1a3157" stroke="#f5c24b" stroke-width="2.2"/><text x="0" y="7" text-anchor="middle" fill="#ffe9b3" font-size="23">请求 · #42</text></g>
+    <g id="ndet" class="pp" opacity="0.45">
+      <rect x="1260" y="540" width="250" height="130" rx="20" fill="url(#panelG)" stroke="#3a5480" stroke-width="2"/>
+      <text x="1385" y="594" text-anchor="middle" fill="#8aa3c9" font-size="26">Detokenizer</text>
+      <text x="1385" y="632" text-anchor="middle" fill="#5f789f" font-size="19">本集样条之后展开</text>
+    </g>
+    <g id="napio" class="pp" opacity="0.45">
+      <rect x="1580" y="540" width="250" height="130" rx="20" fill="url(#panelG)" stroke="#3a5480" stroke-width="2"/>
+      <text x="1705" y="594" text-anchor="middle" fill="#8aa3c9" font-size="26">API Server</text>
+      <text x="1705" y="632" text-anchor="middle" fill="#5f789f" font-size="19">出口 · 本集样条之后</text>
+    </g>
+    <g id="ar1" class="pp"><line x1="400" y1="605" x2="464" y2="605" stroke="#f5c24b" stroke-width="3.4" marker-end="url(#arr)"/></g>
+    <g id="ar2" class="pp"><line x1="720" y1="605" x2="784" y2="605" stroke="#f5c24b" stroke-width="3.4" marker-end="url(#arr)"/></g>
+    <g id="ar3" class="pp"><line x1="1190" y1="605" x2="1254" y2="605" stroke="#f5c24b" stroke-width="3.4" marker-end="url(#arr)"/></g>
+
+    <!-- 请求卡片 -->
+    <g id="req" class="pp">
+      <rect x="330" y="392" rx="14" width="180" height="58" fill="#1a3157" stroke="#f5c24b" stroke-width="2.2"/>
+      <text x="420" y="428" text-anchor="middle" fill="#ffe9b3" font-size="23">请求 · #42</text>
+    </g>
+
+    <!-- ============ 引擎内部：Transformer（世界坐标右侧） ============ -->
+    <g id="ipanel">
+      <rect x="2050" y="120" width="1810" height="880" rx="26" fill="#0f1c33" stroke="#3a5480" stroke-width="2.4"/>
+      <text id="ititle" class="pp" x="2110" y="190" fill="#e8eefb" font-size="32" font-weight="600">Transformer 内部（第 1 层示意）</text>
+      <text x="2110" y="228" fill="#7f97bd" font-size="20">编号 → 查表 → 向量 → Q/K/V → 注意力</text>
+      <!-- token 编号 chips -->
+      <g id="ich0" class="pp"><rect x="2110" y="270" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="304" text-anchor="middle" fill="#cfe0f4" font-size="20">什么 · id₁</text></g>
+      <g id="ich1" class="pp"><rect x="2110" y="360" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="394" text-anchor="middle" fill="#cfe0f4" font-size="20">是 · id₂</text></g>
+      <g id="ich2" class="pp"><rect x="2110" y="450" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="484" text-anchor="middle" fill="#cfe0f4" font-size="20">KV · id₃</text></g>
+      <g id="ich3" class="pp"><rect x="2110" y="540" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="574" text-anchor="middle" fill="#cfe0f4" font-size="20">Cache · id₄</text></g>
+      <g id="ich4" class="pp"><rect x="2110" y="630" rx="9" width="150" height="56" fill="#1a3157" stroke="#4a6ba0" stroke-width="1.8"/><text x="2185" y="664" text-anchor="middle" fill="#cfe0f4" font-size="20">？ · id₅</text></g>
+      <g id="iar1" class="dr"><line x1="2270" y1="298" x2="2420" y2="298" stroke="#f5c24b" stroke-width="2.6" marker-end="url(#arr)"/><line x1="2270" y1="388" x2="2420" y2="388" stroke="#f5c24b" stroke-width="2.6" marker-end="url(#arr)"/><line x1="2270" y1="478" x2="2420" y2="478" stroke="#f5c24b" stroke-width="2.6" marker-end="url(#arr)"/><line x1="2270" y1="568" x2="2420" y2="568" stroke="#f5c24b" stroke-width="2.6" marker-end="url(#arr)"/><line x1="2270" y1="658" x2="2420" y2="658" stroke="#f5c24b" stroke-width="2.6" marker-end="url(#arr)"/></g>
+      <!-- 嵌入表（JS 生成行） -->
+      <g id="itab" class="pp">
+        <rect x="2450" y="240" width="480" height="480" rx="16" fill="#0c1730" stroke="#43608f" stroke-width="1.8"/>
+        <text x="2470" y="272" fill="#9fb6d8" font-size="20">嵌入表 E（行＝词表，取对应行）</text>
+        <g id="itabrows"></g>
+      </g>
+      <g id="iar2" class="dr"><line x1="2940" y1="470" x2="3020" y2="470" stroke="#f5c24b" stroke-width="2.6" marker-end="url(#arr)"/></g>
+      <!-- 向量行 + K 标签（JS 生成行） -->
+      <g id="ivecs"></g>
+      <text id="ivlbl" class="pp" x="2956" y="248" fill="#9fb6d8" font-size="19">向量（含位置 · RoPE 旋转 Q/K）</text>
+      <!-- Q/K/V 三卡 -->
+      <g id="qcard" class="pp"><rect x="3330" y="600" rx="10" width="66" height="56" fill="#2b2410" stroke="#f5c24b" stroke-width="2.6"/><text x="3363" y="636" text-anchor="middle" fill="#ffe9b3" font-size="26">Q</text><text x="3363" y="588" text-anchor="middle" fill="#f5c24b" font-size="16">查询</text></g>
+      <g id="kcard" class="pp"><rect x="3330" y="420" rx="10" width="66" height="56" fill="#12294a" stroke="#7fb3e8" stroke-width="2.6"/><text x="3363" y="456" text-anchor="middle" fill="#cfe4fa" font-size="26">K</text><text x="3363" y="408" text-anchor="middle" fill="#7fb3e8" font-size="16">钥匙</text></g>
+      <g id="vcard" class="pp"><rect x="3330" y="770" rx="10" width="66" height="56" fill="#0f2b20" stroke="#79c7a3" stroke-width="2.6"/><text x="3363" y="806" text-anchor="middle" fill="#c9f2df" font-size="26">V</text><text x="3363" y="758" text-anchor="middle" fill="#79c7a3" font-size="16">内容</text></g>
+      <g id="rope" class="dr"><path d="M3406 628 a44 44 0 0 1 -14 32" stroke="#f5c24b" stroke-width="2.4" fill="none" marker-end="url(#arr)"/><text x="3418" y="620" fill="#f5c24b" font-size="15">RoPE 旋转</text></g>
+      <!-- 注意力弧线（JS 生成 a0..a3 + 自身 a4） -->
+      <g id="arcs"></g>
+      <!-- 掩码幕布 -->
+      <g id="mask" class="pp">
+        <path d="M2880 240 L3430 240 L3430 610 Z" fill="#e0705f" fill-opacity="0.14" stroke="#e0705f" stroke-width="1.6" stroke-dasharray="6 6"/>
+        <text x="3210" y="300" fill="#e0705f" font-size="19">未来位置 ＝ −∞（示意）</text>
+      </g>
+      <!-- 权重条（JS 生成） -->
+      <g id="wbars"></g>
+      <!-- 求和槽与数据流 -->
+      <g id="sum" class="pp"><circle cx="3560" cy="656" r="34" fill="#1a3157" stroke="#f5c24b" stroke-width="2.6"/><text x="3560" y="666" text-anchor="middle" fill="#ffe9b3" font-size="28">Σ</text><text x="3560" y="722" text-anchor="middle" fill="#9fb6d8" font-size="17">加权汇总</text></g>
+      <g id="fd0" class="dr"><circle cx="0" cy="0" r="7" fill="#79c7a3"/></g>
+      <g id="fd1" class="dr"><circle cx="0" cy="0" r="7" fill="#7fb3e8"/></g>
+      <g id="fd2" class="dr"><circle cx="0" cy="0" r="7" fill="#f5c24b"/></g>
+    </g>
+  </svg>
+  </div>
+  <div id="sub"><span id="subtext"></span></div>
+  <div id="mark">SGLang 动画课 · 第 1 集 · G2 动态样条（30s · 1080p25）</div>
+</div>
+<script>
+/* ===== 确定性时间轴：setT(t) —— 画面完全由 t 决定 ===== */
+const NS='http://www.w3.org/2000/svg';
+const E=id=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,x)=>a+(b-a)*x;
+const sstep=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
+const eio=x=>{x=clamp(x,0,1);return x<0.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;};
+const eob=x=>{x=clamp(x,0,1);const c=1.70158,c3=c+1;return 1+c3*Math.pow(x-1,3)+c*Math.pow(x-1,2);};
+
+/* --- 摄影机关键帧 [t, cx, cy, scale] --- */
+const KF=[[0,330,210,1.60],[6.8,330,214,1.52],[9.2,640,520,1.02],[13.0,700,560,1.00],[16.8,990,600,1.14],[19.0,1600,580,1.00],[21.6,2420,540,0.88],[23.2,2530,540,0.95],[26.0,3000,610,1.06],[28.8,3080,600,1.00],[30.001,3080,600,1.00]];
+function cam(t){
+  let i=0; while(i<KF.length-2 && t>KF[i+1][0]) i++;
+  const a=KF[i],b=KF[i+1],x=sstep((t-a[0])/(b[0]-a[0]||1));
+  const cx=lerp(a[1],b[1],x),cy=lerp(a[2],b[2],x),s=lerp(a[3],b[3],x);
+  E('world').style.transform=`translate(${960-cx*s}px, ${540-cy*s}px) scale(${s})`;
+}
+function pop(id,t0,dur=0.4){const el=E(id),x=clamp((T-t0)/dur,0,1);
+  el.style.opacity=x<=0?0:Math.min(1,x*2.5);
+  el.style.transform=x<=0?'scale(0)':`scale(${eob(x)})`;}
+function fade(id,t0,dur=0.3,rev=false){const el=E(id),x=clamp((T-t0)/dur,0,1);
+  el.style.opacity=rev?1-x:x; el.style.pointerEvents='none';}
+function draw(id,t0,dur=0.5){const el=E(id),len=LEN[id];
+  const x=clamp((T-t0)/dur,0,1);
+  el.style.opacity=x<=0?0:1;
+  el.style.strokeDasharray=len; el.style.strokeDashoffset=len*(1-eio(x));}
+function move(id,t0,t1,x0,y0,x1,y1){const el=E(id),x=eio(clamp((T-t0)/(t1-t0),0,1));
+  const op=clamp((T-t0)/0.2,0,1)*clamp((t1-T)/0.2,0,1);
+  el.style.opacity=op<=0?0:1;
+  el.style.transform=`translate(${lerp(x0,x1,x)}px,${lerp(y0,y1,x)}px)`;}
+
+/* --- JS 生成重复元素（嵌入表行 / 向量行 / 弧线 / 权重条） --- */
+const LEN={};
+function pathD(id){const p=E(id);try{LEN[id]=p.getTotalLength();}catch(e){LEN[id]=p.getTotalLength?800:800;}}
+function buildRows(){
+  const rows=E('itabrows');
+  const cols=['#7fb3e8','#79c7a3','#f5c24b','#b48ce8','#e0705f','#58c2b8','#7fb3e8','#79c7a3','#f5c24b','#b48ce8'];
+  for(let r=0;r<5;r++){
+    const g=document.createElementNS(NS,'g'); g.setAttribute('id','itr'+r);
+    for(let c=0;c<10;c++){
+      const rc=document.createElementNS(NS,'rect');
+      rc.setAttribute('x',2470+c*45); rc.setAttribute('y',290+r*82);
+      rc.setAttribute('width',38); rc.setAttribute('height',58); rc.setAttribute('rx',5);
+      rc.setAttribute('fill',cols[c]); rc.setAttribute('opacity',0.16+0.1*((r+c)%3));
+      g.appendChild(rc);
+    }
+    rows.appendChild(g);
+  }
+  const vecs=E('ivecs');
+  for(let r=0;r<5;r++){
+    const y=260+r*92;
+    const g=document.createElementNS(NS,'g'); g.setAttribute('id','iv'+r); g.setAttribute('class','pp');
+    const k=document.createElementNS(NS,'rect');
+    k.setAttribute('x',2870); k.setAttribute('y',y+14); k.setAttribute('width',44); k.setAttribute('height',28); k.setAttribute('rx',7);
+    k.setAttribute('fill','#12294a'); k.setAttribute('stroke','#7fb3e8'); k.setAttribute('stroke-width','1.8');
+    const kt=document.createElementNS(NS,'text'); kt.setAttribute('x',2892); kt.setAttribute('y',y+34); kt.setAttribute('text-anchor','middle'); kt.setAttribute('fill','#cfe4fa'); kt.setAttribute('font-size','16'); kt.textContent='K';
+    const st=document.createElementNS(NS,'rect');
+    st.setAttribute('x',2926); st.setAttribute('y',y); st.setAttribute('width',300); st.setAttribute('height',56); st.setAttribute('rx',10);
+    st.setAttribute('fill',`url(#vecg${r%2})`);
+    const defs=document.querySelector('defs');
+    if(!E('vecg'+(r%2))){const lg=document.createElementNS(NS,'linearGradient'); lg.setAttribute('id','vecg'+(r%2)); lg.setAttribute('x1','0');lg.setAttribute('y1','0');lg.setAttribute('x2','1');lg.setAttribute('y2','0');
+      const s1=document.createElementNS(NS,'stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color',r%2?'#1c3f66':'#1a3157');
+      const s2=document.createElementNS(NS,'stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color',r%2?'#274f7d':'#254a72');
+      lg.appendChild(s1);lg.appendChild(s2);defs.appendChild(lg);}
+    const vt=document.createElementNS(NS,'text'); vt.setAttribute('x',3076); vt.setAttribute('y',y+36); vt.setAttribute('text-anchor','middle'); vt.setAttribute('fill','#dfe9f7'); vt.setAttribute('font-size','17'); vt.textContent='向量 '+('①②③④⑤'[r]);
+    g.appendChild(st); g.appendChild(k); g.appendChild(kt); g.appendChild(vt);
+    vecs.appendChild(g);
+  }
+  const arcs=E('arcs');
+  const ys=[288,380,472,564,656];
+  for(let i=0;i<5;i++){
+    const p=document.createElementNS(NS,'path');
+    const lift=Math.abs(656-ys[i])*0.9;
+    p.setAttribute('d',`M3320 656 C ${3160} ${656-lift}, ${3060} ${ys[i]+ (656-ys[i])*0.2}, 2924 ${ys[i]}`);
+    p.setAttribute('fill','none'); p.setAttribute('stroke',i===4?'#f5c24b':'#58c2b8');
+    p.setAttribute('stroke-width',i===4?3.4:2.6); p.setAttribute('opacity','0.9');
+    if(i===4){p.setAttribute('stroke-dasharray','none');}else{p.setAttribute('stroke-dasharray','10 7');}
+    p.setAttribute('id','arc'+i); p.setAttribute('class','dr'); arcs.appendChild(p);
+  }
+  const wb=E('wbars');
+  const w=[0.10,0.16,0.14,0.24,0.36];
+  for(let i=0;i<5;i++){
+    const g=document.createElementNS(NS,'g'); g.setAttribute('id','wb'+i); g.setAttribute('class','pp');
+    const rc=document.createElementNS(NS,'rect');
+    rc.setAttribute('x',2870); rc.setAttribute('y',260+i*92+64); rc.setAttribute('width',0); rc.setAttribute('height',7); rc.setAttribute('rx',3.5);
+    rc.setAttribute('fill',i===4?'#f5c24b':'#58c2b8'); rc.setAttribute('opacity','0.95');
+    g.appendChild(rc); wb.appendChild(g);
+  }
+}
+buildRows();
+['rail','scan','rope','arc0','arc1','arc2','arc3','arc4'].forEach(id=>{const p=E(id);if(p&&p.getTotalLength){try{LEN[id]=p.getTotalLength();}catch(e){LEN[id]=600;}}});
+
+/* --- 字幕（与配音逐句对齐） --- */
+const SUB=[
+ [0.50,5.19,'按下回车。你的问题，先被切成一块一块的 Token。'],
+ [8.20,12.87,'请求拿到号牌，交给 Tokenizer，变成一串编号。'],
+ [14.00,17.98,'调度器排好队：这一轮算谁，由它决定。'],
+ [20.30,25.58,'进入 Transformer：查表变成向量，生成 Q、K、V。'],
+ [25.78,29.99,'和当前位置以及之前的 K 比对——注意力，开始了。']
+];
+function sub(t){
+  const box=E('sub'),tx=E('subtext');let s=null;
+  for(const [a,b,txt] of SUB){ if(t>=a&&t<=b){s=txt;break;} }
+  if(s){box.style.opacity=1;tx.textContent=s;}else{box.style.opacity=0;}
+}
+
+/* --- 主时间轴 --- */
+let T=0;
+function setT(t){
+  t=Math.max(0,Math.min(30,t)); T=t; window.T=T;
+  cam(t); sub(t);
+  /* 0-8s：回车 + Token 出现 */
+  fade('ebox',0.2,0.4);
+  const press=clamp((t-0.9)/0.4,0,1);
+  E('ebtn').style.transformBox='fill-box';E('ebtn').style.transformOrigin='center';
+  E('ebtn').style.transform=`scaleY(${1-0.18*Math.sin(Math.min(press*Math.PI,Math.PI))})`;
+  E('pclipr').setAttribute('width',String(560*clamp((t-1.5)/1.6,0,1)));
+  pop('qc0',3.4);pop('qc1',4.0);pop('qc2',4.6);pop('qc3',5.2);pop('qc4',5.8);pop('qnote',6.3,0.3);
+  /* 8-20s：API Server → Tokenizer → Scheduler */
+  draw('rail',7.4,1.4);
+  pop('napi',8.2); pop('req',8.6);
+  move('req',9.0,9.9,330,392,80,392);
+  pop('ar1',9.8,0.25); pop('ntok',10.2);
+  pop('tid0',10.8);pop('tid1',11.2);pop('tid2',11.6);
+  pop('ar2',12.8,0.25); pop('nsch',13.5);
+  pop('q41',14.0);pop('q42',14.4);pop('q43',14.8);
+  draw('scan',15.2,1.0); fade('pri',15.2,0.3);
+  fade('scan',16.2,0.3,true);
+  move('req2',16.6,17.5,975,600,1086,600);
+  fade('req2',17.8,0.35,true);
+  /* 20-30s：Transformer 内部 */
+  pop('ipanel',18.6,0.5);
+  pop('ititle',20.8);
+  pop('ich0',21.0);pop('ich1',21.3);pop('ich2',21.6);pop('ich3',21.9);pop('ich4',22.2);
+  fade('iar1',22.0,0.6);
+  pop('itab',21.4,0.5);
+  fade('itr0',22.4,0.3);fade('itr1',22.6,0.3);fade('itr2',22.8,0.3);fade('itr3',23.0,0.3);fade('itr4',23.2,0.3);
+  fade('iar2',23.2,0.4);
+  pop('iv0',23.3);pop('iv1',23.5);pop('iv2',23.7);pop('iv3',23.9);pop('iv4',24.1);
+  pop('ivlbl',23.6,0.3);
+  pop('qcard',24.0);pop('kcard',24.3);pop('vcard',24.6);
+  draw('rope',24.6,0.5);
+  draw('arc0',25.4,0.5);draw('arc1',25.9,0.5);draw('arc2',26.4,0.5);draw('arc3',26.9,0.5);draw('arc4',27.4,0.5);
+  pop('wb0',26.0,0.3);pop('wb1',26.5,0.3);pop('wb2',27.0,0.3);pop('wb3',27.5,0.3);pop('wb4',28.0,0.3);
+  const hw=[25,40,35,60,90];
+  for(let i=0;i<5;i++){const rc=E('wb'+i).querySelector('rect');rc.setAttribute('width',String(hw[i]*clamp((T-(26.0+i*0.5))/0.35,0,1)));}
+  pop('mask',27.8,0.5);
+  pop('sum',28.4,0.35);
+  move('fd0',28.5,29.4,3268,408,3540,648);
+  move('fd1',28.7,29.6,3268,592,3540,652);
+  move('fd2',28.9,29.8,3268,684,3540,656);
+}
+window.setT=setT;
+setT(0);
+</script>
+</body>
+</html>

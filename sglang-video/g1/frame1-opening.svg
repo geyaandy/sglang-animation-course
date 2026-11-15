@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#16294a"/>
+      <stop offset="55%" stop-color="#0e1c34"/>
+      <stop offset="100%" stop-color="#0a1524"/>
+    </radialGradient>
+    <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#7fa8d9" opacity="0.10"/>
+    </pattern>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd977"/>
+      <stop offset="100%" stop-color="#e8b13f"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#13233f"/>
+      <stop offset="100%" stop-color="#0f1c33"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景与地面 -->
+  <rect width="1920" height="1080" fill="url(#glow)"/>
+  <rect width="1920" height="1080" fill="url(#dots)"/>
+  <g stroke="#5b83b8" opacity="0.13">
+    <line x1="0" y1="840" x2="1920" y2="840" stroke-width="1.4"/>
+    <line x1="0" y1="880" x2="1920" y2="880" stroke-width="1.2"/>
+    <line x1="0" y1="925" x2="1920" y2="925" stroke-width="1.0"/>
+    <line x1="0" y1="975" x2="1920" y2="975" stroke-width="0.9"/>
+    <line x1="0" y1="1030" x2="1920" y2="1030" stroke-width="0.8"/>
+    <line x1="960" y1="840" x2="960" y2="1080" stroke-width="1.0"/>
+    <line x1="660" y1="840" x2="520" y2="1080" stroke-width="1.0"/>
+    <line x1="1260" y1="840" x2="1400" y2="1080" stroke-width="1.0"/>
+    <line x1="380" y1="840" x2="80" y2="1080" stroke-width="1.0"/>
+    <line x1="1540" y1="840" x2="1840" y2="1080" stroke-width="1.0"/>
+    <line x1="120" y1="840" x2="-320" y2="1080" stroke-width="1.0"/>
+    <line x1="1800" y1="840" x2="2240" y2="1080" stroke-width="1.0"/>
+  </g>
+
+  <!-- 顶部系列标识与角标 -->
+  <g fill="#c9d8ee" font-size="22" opacity="0.85">
+    <text x="48" y="54">SGLang 动画课 · 第 1 集</text>
+  </g>
+  <g>
+    <rect x="1608" y="30" rx="10" width="264" height="40" fill="none" stroke="#8fa9cf" stroke-width="1.4" opacity="0.7"/>
+    <text x="1740" y="57" text-anchor="middle" fill="#a9bcd9" font-size="19">示例回答 · 教学示意</text>
+  </g>
+
+  <!-- 聊天窗口卡片 -->
+  <g>
+    <rect x="410" y="170" width="1100" height="560" rx="28" fill="url(#panel)" stroke="#3a5480" stroke-width="2"/>
+    <rect x="410" y="170" width="1100" height="560" rx="28" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="6"/>
+    <!-- 输入区 -->
+    <rect x="470" y="230" width="980" height="86" rx="43" fill="#0c1730" stroke="#43608f" stroke-width="2"/>
+    <text x="516" y="284" fill="#dfe9f7" font-size="34">什么是 KV Cache？</text>
+    <rect x="1330" y="244" width="102" height="58" rx="29" fill="url(#gold)"/>
+    <path d="M1366 273 h44 M1400 262 l14 11 -14 11" stroke="#3a2c08" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- 提问 token 链 -->
+    <g font-size="27" fill="#cfe0f4">
+      <rect x="470" y="360" rx="12" width="96" height="54" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/>
+      <rect x="578" y="360" rx="12" width="72" height="54" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/>
+      <rect x="662" y="360" rx="12" width="88" height="54" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/>
+      <rect x="762" y="360" rx="12" width="118" height="54" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/>
+      <rect x="892" y="360" rx="12" width="54" height="54" fill="#16294a" stroke="#4a6ba0" stroke-width="1.6"/>
+      <text x="518" y="395" text-anchor="middle">什么</text>
+      <text x="614" y="395" text-anchor="middle">是</text>
+      <text x="706" y="395" text-anchor="middle">KV</text>
+      <text x="821" y="395" text-anchor="middle">Cache</text>
+      <text x="919" y="395" text-anchor="middle">？</text>
+      <line x1="478" y1="404" x2="558" y2="404" stroke="#f5c24b" stroke-width="3" opacity="0.85"/>
+      <line x1="586" y1="404" x2="642" y2="404" stroke="#f5c24b" stroke-width="3" opacity="0.85"/>
+      <line x1="670" y1="404" x2="742" y2="404" stroke="#f5c24b" stroke-width="3" opacity="0.85"/>
+      <line x1="770" y1="404" x2="872" y2="404" stroke="#f5c24b" stroke-width="3" opacity="0.85"/>
+      <line x1="900" y1="404" x2="938" y2="404" stroke="#f5c24b" stroke-width="3" opacity="0.85"/>
+    </g>
+    <!-- 分隔虚线 -->
+    <line x1="470" y1="452" x2="1450" y2="452" stroke="#2c4470" stroke-width="2" stroke-dasharray="7 8"/>
+    <!-- 回答 token 链（S01 定格） -->
+    <g font-size="30">
+      <g>
+        <rect x="470" y="496" rx="13" width="82" height="60" fill="#1a3157" stroke="#f5c24b" stroke-width="2.4"/>
+        <text x="511" y="536" text-anchor="middle" fill="#ffe9b3">KV</text>
+        <line x1="480" y1="546" x2="542" y2="546" stroke="#f5c24b" stroke-width="4"/>
+      </g>
+      <g>
+        <rect x="566" y="496" rx="13" width="112" height="60" fill="#1a3157" stroke="#f5c24b" stroke-width="2.4"/>
+        <text x="622" y="536" text-anchor="middle" fill="#ffe9b3">Cache</text>
+        <line x1="576" y1="546" x2="668" y2="546" stroke="#f5c24b" stroke-width="4"/>
+      </g>
+      <g>
+        <rect x="692" y="496" rx="13" width="72" height="60" fill="#1a3157" stroke="#8fb2df" stroke-width="2"/>
+        <text x="728" y="536" text-anchor="middle" fill="#dfe9f7">是</text>
+        <line x1="702" y1="546" x2="754" y2="546" stroke="#8fb2df" stroke-width="3"/>
+      </g>
+      <g>
+        <rect x="778" y="496" rx="13" width="72" height="60" fill="#1a3157" stroke="#8fb2df" stroke-width="2"/>
+        <text x="814" y="536" text-anchor="middle" fill="#dfe9f7">给</text>
+        <line x1="788" y1="546" x2="840" y2="546" stroke="#8fb2df" stroke-width="3"/>
+      </g>
+      <g>
+        <rect x="864" y="496" rx="13" width="92" height="60" fill="#1a3157" stroke="#8fb2df" stroke-width="2"/>
+        <text x="910" y="536" text-anchor="middle" fill="#dfe9f7">模型</text>
+        <line x1="874" y1="546" x2="946" y2="546" stroke="#8fb2df" stroke-width="3"/>
+      </g>
+      <g>
+        <rect x="970" y="496" rx="13" width="72" height="60" fill="#1a3157" stroke="#8fb2df" stroke-width="2"/>
+        <text x="1006" y="536" text-anchor="middle" fill="#dfe9f7">记</text>
+        <line x1="980" y1="546" x2="1032" y2="546" stroke="#8fb2df" stroke-width="3"/>
+      </g>
+      <g>
+        <rect x="1056" y="496" rx="13" width="92" height="60" fill="#1a3157" stroke="#8fb2df" stroke-width="2"/>
+        <text x="1102" y="536" text-anchor="middle" fill="#dfe9f7">笔记</text>
+        <line x1="1066" y1="546" x2="1138" y2="546" stroke="#8fb2df" stroke-width="3"/>
+      </g>
+      <g>
+        <rect x="1162" y="496" rx="13" width="122" height="60" fill="#1a3157" stroke="#8fb2df" stroke-width="2"/>
+        <text x="1223" y="536" text-anchor="middle" fill="#dfe9f7">的本子，</text>
+        <line x1="1172" y1="546" x2="1274" y2="546" stroke="#8fb2df" stroke-width="3"/>
+      </g>
+      <!-- 光标 -->
+      <rect x="1300" y="500" width="10" height="52" fill="#f5c24b">
+        <animate attributeName="opacity" values="1;1;0;0;1" dur="1.2s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <!-- 弹出说明小字 -->
+    <text x="470" y="602" fill="#7f97bd" font-size="21">每块带金色下划线＝一个 Token；逐块弹出，光标随行</text>
+    <text x="470" y="630" fill="#f5c24b" font-size="21">教学切分示意 · 非真实 Qwen3 Tokenizer 输出（真实切分规则见第 2 集）</text>
+    <text x="470" y="662" fill="#7f97bd" font-size="21">来源镜头：S01（开场冷开定格） · 1920×1080 · 25fps</text>
+  </g>
+
+  <!-- 底部字幕条 -->
+  <g>
+    <rect x="0" y="936" width="1920" height="90" fill="#0a1524" opacity="0.55"/>
+    <text x="960" y="992" text-anchor="middle" fill="#eef4fc" font-size="34">你有没有留意过——回答，是一个字一个字蹦出来的？</text>
+  </g>
+</svg>

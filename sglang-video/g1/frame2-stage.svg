@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
+  <defs>
+    <radialGradient id="glow2" cx="50%" cy="36%" r="80%">
+      <stop offset="0%" stop-color="#15264453"/>
+      <stop offset="0%" stop-color="#16294a"/>
+      <stop offset="55%" stop-color="#0e1c34"/>
+      <stop offset="100%" stop-color="#0a1524"/>
+    </radialGradient>
+    <pattern id="dots2" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#7fa8d9" opacity="0.10"/>
+    </pattern>
+    <linearGradient id="panel2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#13233f"/>
+      <stop offset="100%" stop-color="#0f1c33"/>
+    </linearGradient>
+    <linearGradient id="gold2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd977"/>
+      <stop offset="100%" stop-color="#e8b13f"/>
+    </linearGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f5c24b"/>
+    </marker>
+    <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7fb3e8"/>
+    </marker>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#glow2)"/>
+  <rect width="1920" height="1080" fill="url(#dots2)"/>
+  <g stroke="#5b83b8" opacity="0.12">
+    <line x1="0" y1="930" x2="1920" y2="930" stroke-width="1.2"/>
+    <line x1="0" y1="975" x2="1920" y2="975" stroke-width="1.0"/>
+    <line x1="0" y1="1025" x2="1920" y2="1025" stroke-width="0.9"/>
+    <line x1="960" y1="930" x2="960" y2="1080" stroke-width="1.0"/>
+    <line x1="560" y1="930" x2="360" y2="1080" stroke-width="1.0"/>
+    <line x1="1360" y1="930" x2="1560" y2="1080" stroke-width="1.0"/>
+  </g>
+
+  <g fill="#c9d8ee" font-size="22" opacity="0.85">
+    <text x="48" y="54">SGLang 动画课 · 第 1 集</text>
+  </g>
+  <g>
+    <rect x="1598" y="30" rx="10" width="274" height="40" fill="none" stroke="#8fa9cf" stroke-width="1.4" opacity="0.7"/>
+    <text x="1735" y="57" text-anchor="middle" fill="#a9bcd9" font-size="19">架构 · 教学简化重绘</text>
+  </g>
+
+  <!-- A 区：浏览器窗口 -->
+  <g>
+    <rect x="120" y="96" width="420" height="230" rx="18" fill="url(#panel2)" stroke="#3a5480" stroke-width="2"/>
+    <text x="150" y="140" fill="#9fb6d8" font-size="20">A 区 · 用户视角</text>
+    <rect x="150" y="160" width="300" height="42" rx="21" fill="#0c1730" stroke="#43608f" stroke-width="1.6"/>
+    <text x="168" y="188" fill="#dfe9f7" font-size="20">什么是 KV Cache？</text>
+    <rect x="460" y="168" width="52" height="27" rx="13.5" fill="url(#gold2)"/>
+    <g font-size="18" fill="#cfe0f4">
+      <rect x="150" y="222" rx="8" width="56" height="34" fill="#1a3157" stroke="#f5c24b" stroke-width="1.8"/>
+      <text x="178" y="245" text-anchor="middle">KV</text>
+      <rect x="216" y="222" rx="8" width="78" height="34" fill="#1a3157" stroke="#f5c24b" stroke-width="1.8"/>
+      <text x="255" y="245" text-anchor="middle">Cache</text>
+      <rect x="304" y="222" rx="8" width="46" height="34" fill="#1a3157" stroke="#8fb2df" stroke-width="1.4"/>
+      <text x="327" y="245" text-anchor="middle">是</text>
+      <rect x="150" y="266" rx="8" width="46" height="34" fill="#1a3157" stroke="#8fb2df" stroke-width="1.4"/>
+      <text x="173" y="289" text-anchor="middle">给</text>
+      <rect x="206" y="266" rx="8" width="62" height="34" fill="#1a3157" stroke="#8fb2df" stroke-width="1.4"/>
+      <text x="237" y="289" text-anchor="middle">模型</text>
+    </g>
+  </g>
+
+  <!-- 流水线主轨道 -->
+  <line x1="150" y1="470" x2="1770" y2="470" stroke="#2c4470" stroke-width="3" stroke-dasharray="3 9"/>
+
+  <!-- 节点 1：API Server(入口) -->
+  <g>
+    <rect x="150" y="540" width="250" height="130" rx="20" fill="url(#panel2)" stroke="#7fb3e8" stroke-width="2.6"/>
+    <text x="275" y="594" text-anchor="middle" fill="#dfe9f7" font-size="28">API Server</text>
+    <text x="275" y="632" text-anchor="middle" fill="#7fb3e8" font-size="21">前台 · 入口</text>
+    <circle cx="120" cy="540" r="5" fill="#2c4470"/>
+  </g>
+  <!-- 节点 2：Tokenizer -->
+  <g>
+    <rect x="470" y="540" width="250" height="130" rx="20" fill="url(#panel2)" stroke="#7fb3e8" stroke-width="2.6"/>
+    <text x="595" y="594" text-anchor="middle" fill="#dfe9f7" font-size="28">Tokenizer</text>
+    <text x="595" y="632" text-anchor="middle" fill="#7fb3e8" font-size="21">文本 ⇄ Token</text>
+  </g>
+  <!-- 节点 3：调度+引擎 双门 -->
+  <g>
+    <rect x="790" y="522" width="400" height="166" rx="22" fill="#13233f" stroke="#4a6ba0" stroke-width="2.2"/>
+    <rect x="806" y="540" width="176" height="130" rx="16" fill="#0f1c33" stroke="#7fb3e8" stroke-width="2.6"/>
+    <text x="894" y="598" text-anchor="middle" fill="#dfe9f7" font-size="27">调度器</text>
+    <text x="894" y="634" text-anchor="middle" fill="#7fb3e8" font-size="20">决定算谁</text>
+    <rect x="998" y="540" width="176" height="130" rx="16" fill="#0f1c33" stroke="#f5c24b" stroke-width="2.8"/>
+    <text x="1086" y="598" text-anchor="middle" fill="#ffe9b3" font-size="27">引　擎</text>
+    <text x="1086" y="634" text-anchor="middle" fill="#f5c24b" font-size="20">负责怎么算</text>
+    <text x="990" y="710" text-anchor="middle" fill="#7f97bd" font-size="18">同一进程 · 教学简化</text>
+  </g>
+  <!-- 节点 4：Detokenizer -->
+  <g>
+    <rect x="1260" y="540" width="250" height="130" rx="20" fill="url(#panel2)" stroke="#7fb3e8" stroke-width="2.6"/>
+    <text x="1385" y="594" text-anchor="middle" fill="#dfe9f7" font-size="28">Detokenizer</text>
+    <text x="1385" y="632" text-anchor="middle" fill="#7fb3e8" font-size="21">拼完整才放行</text>
+  </g>
+  <!-- 节点 5：API Server(出口) -->
+  <g>
+    <rect x="1580" y="540" width="250" height="130" rx="20" fill="url(#panel2)" stroke="#7fb3e8" stroke-width="2.6" stroke-dasharray="0"/>
+    <text x="1705" y="594" text-anchor="middle" fill="#dfe9f7" font-size="28">API Server</text>
+    <text x="1705" y="632" text-anchor="middle" fill="#7fb3e8" font-size="21">前台 · 出口</text>
+  </g>
+
+  <!-- 节点间箭头 -->
+  <g stroke="#f5c24b" stroke-width="3.4" fill="none">
+    <line x1="400" y1="605" x2="464" y2="605" marker-end="url(#arr)"/>
+    <line x1="720" y1="605" x2="784" y2="605" marker-end="url(#arr)"/>
+    <line x1="1190" y1="605" x2="1254" y2="605" marker-end="url(#arr)"/>
+    <line x1="1510" y1="605" x2="1574" y2="605" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- 四类组件分组括线 -->
+  <g stroke="#7f97bd" fill="none" stroke-width="2" opacity="0.9">
+    <path d="M275 690 v26 M150 716 h1660 M1705 690 v26"/>
+  </g>
+  <text x="960" y="750" text-anchor="middle" fill="#9fb6d8" font-size="22">① API Server（入口＋出口）　② Tokenizer　③ 调度器＋引擎　④ Detokenizer　——　四类逻辑组件 · 五个路径节点（不是五个程序）</text>
+
+  <!-- 请求卡片与号牌 -->
+  <g>
+    <rect x="330" y="392" width="180" height="58" rx="14" fill="#1a3157" stroke="#f5c24b" stroke-width="2.2"/>
+    <text x="420" y="428" text-anchor="middle" fill="#ffe9b3" font-size="23">请求 · 号牌 #42</text>
+    <line x1="420" y1="450" x2="450" y2="536" stroke="#f5c24b" stroke-width="2.6" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- SSE 回环波纹 -->
+  <path d="M1705 536 C1705 330 640 300 340 300 L340 260" stroke="#58c2b8" stroke-width="3" fill="none" stroke-dasharray="10 8" marker-end="url(#arrB)"/>
+  <g stroke="#58c2b8" stroke-width="2.4" fill="none" opacity="0.85">
+    <path d="M760 292 q14 -14 28 0 t28 0 t28 0"/>
+    <path d="M980 292 q14 -14 28 0 t28 0 t28 0"/>
+    <path d="M1200 292 q14 -14 28 0 t28 0 t28 0"/>
+  </g>
+  <text x="1020" y="268" fill="#58c2b8" font-size="21">SSE：一段一段推回浏览器（改善首段等待，不减少计算）</text>
+
+  <!-- 底部字幕条 -->
+  <g>
+    <rect x="0" y="936" width="1920" height="90" fill="#0a1524" opacity="0.55"/>
+    <text x="960" y="992" text-anchor="middle" fill="#eef4fc" font-size="34">
+      <tspan fill="#7fb3e8">调度器决定算谁</tspan>，<tspan fill="#f5c24b">引擎负责怎么算</tspan>
+    </text>
+  </g>
+</svg>
